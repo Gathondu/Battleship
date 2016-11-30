@@ -1,33 +1,36 @@
-SHIP_INFO = [
-    ("Aircraft Carrier", 5),
-    ("Battleship", 4),
-    ("Submarine", 3),
-    ("Cruiser", 3),
-    ("Patrol Boat", 2)
-]
-
-BOARD_SIZE = 10
-
-VERTICAL_SHIP = '|'
-HORIZONTAL_SHIP = '-'
-EMPTY = 'O'
-MISS = '.'
-HIT = '*'
-SUNK = '#'
+from board import Board
+from player import Player
+from ship import Ship
 
 
-def clear_screen():
-    print("\033c", end="")
+if __name__ == "__main__":
+    default_board = Board().board
+    player_board = Board()
+    ships = Ship()
+    index = 0
+    orientation = 'y'
+    # player1 = Player(input('Enter your name: '), Ship.get_ships())
 
+    def clear_screen():
+        print("\033c", end="")
 
-def print_board_heading():
-    print("   " + " ".join([chr(c) for c in range(ord('A'), ord('A') + BOARD_SIZE)]))
+    # Place the location of the aircraft carrier (5 spaces): a2
+    # Is it horizontal? (Y)/N: n
+    def get_player_ships():
+        try:
+            for ship in ships.get_ships():
+                get_index(ship)
+                player_board.ship_board(player_board.board, ship, index,
+                                        orientation)
+        except:
+            raise
 
-
-def print_board(board):
-    print_board_heading()
-
-    row_num = 1
-    for row in board:
-        print(str(row_num).rjust(2) + " " + (" ".join(row)))
-        row_num += 1
+    get_player_ships()
+    # h = True
+    # index = range(3)
+    # for x in index:
+    #     if h:
+    #         board[x] = '.' + 'O' * 9
+    #     else:
+    #         board[0][x] = '.'
+    # print_board(board)
