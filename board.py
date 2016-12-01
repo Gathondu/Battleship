@@ -1,5 +1,6 @@
 import string
 
+
 class Board:
     """
     Class for the board.
@@ -14,6 +15,7 @@ class Board:
     HIT = '*'
     SUNK = '#'
     board = [['O' for n in range(10)] for n in range(10)]
+    ALLOWED_CHARS = list(map(chr, range(97, (97 + BOARD_SIZE))))
 
     def clear_screen():
         print("\033c", end="")
@@ -46,7 +48,7 @@ class Board:
         h = True
         if orientation.lower() != 'y':
             h = False
-        for x in range(ship_info[1]):
+        for x in range(ship[1]):
             if h:
                 board[x_index][y_index] = self.HORIZONTAL_SHIP
                 y_index += 1  # draw ship horizontally
@@ -60,29 +62,42 @@ class Board:
         Calculates the index based on input values given e.g A3.
         returns     index and orientation of ship on board
         """
-        value = list(raw_input('Place the location of the {} ({} spaces): '
-                    .format(*ship)))
-        value[0] = value[0].lower()
-        orientation = raw_input('Is it horizontal? [Y]/N: ').lower()
-        while true:
+        value = list(input('Place the location of the {} ({} spaces): '
+                           .format(*ship)))
+        orientation = input('Is it horizontal? [Y]/N: ').lower()
+        while True:
             if orientation not in ('y', 'n'):
-                orientation = raw_input('Is it horizontal? [Y]/N:[must be y or n ] ').lower()
+                orientation = input('Is it horizontal? [Y]/N:' +
+                                    '[must be y or n ] ').lower()
             else:
                 break
         try:
-            if value[0] not in list(map(chr, range(97, (97+ self.BOARD_SIZE)))):  # make sure column headers from input are within board size
+            # make sure column headers from input are within board size
+            if value[0].lower() not in self.ALLOWED_CHARS:
                 raise IndexError
-            elif value[1] not in range(self.BOARD_SIZE+1):  # +1 because of the row numbering
+            # +1 because of the row numbering
+            elif int(value[1]) not in range(1, self.BOARD_SIZE + 1):
                 raise IndexError
             else:
-                count = 1
-                for char in list(map(chr, range(97, (97+ self.BOARD_SIZE)))):  # convert alphabetic index to integer index
+                count = 0
+                for char in self.ALLOWED_CHARS:
+                    # convert alphabetic index to integer index
                     if value[0] is char:
                         value[0] = count
+                        # -1 since lists use 0 based index
+                        value[1] = int(value[1]) - 1
                         break
-                    count +=1
-            return (value,orientation)
+                    count += 1
+                return (value, orientation)
         except IndexError as e:
-            print('''Value you entered is not within the scope of the board. Should be a letter within: {}
-                    and a number between: {}'''.format(list(map(chr, range(97, (97+ self.BOARD_SIZE)))), list(range(self.BOARD_SIZE)))
-            (value, orientation) = get_index(self.ship)
+            print('''Value you entered is not within the scope of the board.
+            Should be a letter within: {}
+            and a number between: {}'''
+                  .format(self.ALLOWED_CHARS,
+                          list(range(1, self.BOARD_SIZE + 1))))
+            return self.get_index(ship)
+
+b = Board()
+player1 = Board.board
+player1 = b.ship_on_board(b.board, ("Aircraft", 5))
+print(b.print_board(player1))
