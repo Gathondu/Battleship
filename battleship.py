@@ -2,35 +2,26 @@ from board import Board
 from player import Player
 from ship import Ship
 
-
 if __name__ == "__main__":
-    default_board = Board().board
-    player_board = Board()
+    default = Board()
+    NO_OF_PLAYERS = 2
     ships = Ship()
-    index = 0
-    orientation = 'y'
-    # player1 = Player(input('Enter your name: '), Ship.get_ships())
-
-    def clear_screen():
-        print("\033c", end="")
-
-    # Place the location of the aircraft carrier (5 spaces): a2
-    # Is it horizontal? (Y)/N: n
-    def get_player_ships():
-        try:
-            for ship in ships.get_ships():
-                get_index(ship)
-                player_board.ship_board(player_board.board, ship, index,
-                                        orientation)
-        except:
-            raise
-
-    get_player_ships()
-    # h = True
-    # index = range(3)
-    # for x in index:
-    #     if h:
-    #         board[x] = '.' + 'O' * 9
-    #     else:
-    #         board[0][x] = '.'
-    # print_board(board)
+    player1 = Player(input('Enter your name player 1: '))
+    default.clear_screen()
+    player2 = Player(input('Enter your name player 2: '))
+    player1.board = Board()
+    player2.board = Board()
+    default.clear_screen()
+    print(player1.name.upper() + ':')
+    player1.get_player_ships(player1.board, [("Aircraft", 5),
+                                             ("Submarine", 4)])
+    default.clear_screen()
+    player1.board.print_board(player1.board.board)
+    input('Hit enter to continue')
+    default.clear_screen()
+    print(player2.name.upper() + ':')
+    player2.get_player_ships(player2.board, [("Aircraft", 5),
+                                             ("Submarine", 4)])
+    player2.board.print_board(player2.board.board)
+    input('Hit enter to continue')
+    default.clear_screen()
