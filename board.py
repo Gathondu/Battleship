@@ -17,6 +17,7 @@ class Board:
         self.SUNK = '#'
         self.board = [['O' for n in range(10)] for n in range(10)]
         self.ALLOWED_CHARS = list(map(chr, range(97, (97 + self.BOARD_SIZE))))
+        self.ALL_CHARS = list(map(chr, range(97, 123)))
         self.ALLOWED_NUMS = [str(s) for s in range(1, self.BOARD_SIZE + 1)]
 
     def clear_screen(self):
@@ -39,19 +40,33 @@ class Board:
         Calculates the index based on input values given e.g A3.
         returns     index and orientation of ship on board
         """
-        value = list(input('Place the location of the {} ({} spaces): '
-                           .format(*ship)))
-        # accept input with white spaces anywhere between , before
-        # or after allowed input
-        value = [s for s in value if s != ' ']
-        orientation = input('Is it horizontal? [Y]/N: ').lower()
-        while True:
-            if orientation not in ('y', 'n'):
-                orientation = input('Is it horizontal? [Y]/N:' +
-                                    '[must be y or n ] ').lower()
-            else:
-                break
         try:
+            value = list(input('Place the location of the {} ({} spaces): '
+                               .format(*ship)))
+            # value = ['j', '8']
+            # accept input with white spaces anywhere between , before
+            # or after allowed input
+            value = [s for s in value if s != ' ']
+
+            # check if there was a double digit input
+            if len(value) > 2:
+                digits = [s for s in value if s.isdigit()]
+                digits = "".join(digits)
+                value[1] = digits
+                value.pop()
+            elif len(value) > 3:
+                raise IndexError
+
+            orientation = input('Is it horizontal? [Y]/N: ').lower()
+            # orientation = 'n'
+            while True:
+                if orientation not in ('y', 'n'):
+                    self.clear_screen()
+                    self.print_board(self.board)
+                    orientation = input('Is it horizontal? [Y]/N:' +
+                                        '[must be y or n ] ').lower()
+                else:
+                    break
             # make sure column headers from input are within board size
             if value[0].lower() not in self.ALLOWED_CHARS:
                 raise IndexError
@@ -62,6 +77,8 @@ class Board:
                 value[1] = int(value[1]) - 1
                 return (value, orientation)
         except IndexError:
+            self.clear_screen()
+            self.print_board(self.board)
             print('''Value you entered is not within the scope of the board.
             Should be a letter within: {}
             and a number between: {}'''
@@ -79,40 +96,40 @@ class Board:
                                          x_index + 1))
             for x in range(ship[1]):
                 if orientation:
-                    if self.board[x_index][y_index] != self.EMPTY:
-                        raise ValueError("The index {}{} is not empty"
-                                         .format(self.ALLOWED_CHARS[y_index],
-                                                 x_index + 1))
-                    elif str(y_index+1) not in self.ALLOWED_NUMS:
+                    if y_index not in range(10):
                         # +1 since y_index is zero based for the list
-                        raise IndexError("The ship will be out of the " +
-                                         "board on position {}{} for " +
-                                         "chosen orientation"
+                        raise IndexError("""The ship will be out of the
+board on position {}{} for chosen orientation""".format
+                                         (self.ALL_CHARS[y_index],
+                                          x_index + 1))
+                    elif self.board[x_index][y_index] != self.EMPTY:
+                        raise ValueError("The index {}{} is not empty"
                                          .format(self.ALLOWED_CHARS[y_index],
                                                  x_index + 1))
                     else:
                         y_index += 1
                 else:
-                    if self.board[x_index][y_index] != self.EMPTY:
+                    if x_index not in range(10):
+                        raise IndexError("""The ship will be out of the
+board on position {}{} for chosen orientation""".format
+                                         (self.ALL_CHARS[y_index],
+                                          x_index + 1))
+                    elif self.board[x_index][y_index] != self.EMPTY:
                         raise ValueError("The index {}{} is not empty!"
                                          .format(
                                            self.ALLOWED_CHARS[y_index],
                                            x_index + 1))
-                    elif str(x_index) not in self.ALLOWED_NUMS:
-                        # +1 since y_index is zero based for the list
-                        raise IndexError("The ship will be out of the " +
-                                         "board on position {}{} for " +
-                                         "chosen orientation"
-                                         .format(
-                                          self.ALLOWED_CHARS[y_index],
-                                          x_index + 1))
                     else:
                         x_index += 1
         except ValueError as e:
+            self.clear_screen()
+            self.print_board(self.board)
             print(e.args[0])
             return False
-        except IndexError as e:
-            print(e.args[0])
+        except IndexError as i:
+            self.clear_screen()
+            self.print_board(self.board)
+            print(i.args[0])
             return False
         else:
             return True
@@ -141,6 +158,7 @@ class Board:
                 else:
                     self.board[x_index][y_index] = self.VERTICAL_SHIP
                     x_index += 1  # draw ship vertically
+            self.clear_screen()
             return self.board
         else:
             self.ship_on_board(ship)
