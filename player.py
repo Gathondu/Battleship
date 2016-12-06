@@ -13,3 +13,4 @@ class Player:
     def get_player_ships(self, board, ships):
             for ship in ships:
                 board.ship_on_board(ship)
+                board.print_board(board.board)
