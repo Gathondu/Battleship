@@ -31,3 +31,24 @@ if __name__ == "__main__":
     player2.board.print_board(player2.board.board)
     input('Hit enter to continue')
     default.clear_screen()
+
+    count = 0
+    while True:
+        if count == 0:
+            input('{} it\'s your turn to play.\nPress Enter '
+                  'to continue'.format(player1.name))
+            count = 1
+            default.clear_screen()
+            default.print_board(default.board)
+            result = player1.fire(player2.board)
+            if result[2] == 'hit':
+                print('You HIT')
+            elif result[2] == 'miss':
+                print('You miss')
+            elif result[2] == 'error':
+                pring('Something bad happened!!!')
+                break
+        else:
+            input('{} it\'s your turn to play.\nPress Enter '
+                  'to continue'.format(player2.name))
+            count = 0

@@ -14,3 +14,9 @@ class Player:
             for ship in ships:
                 board.ship_on_board(ship)
                 board.print_board(board.board)
+
+    def fire(self, board):
+        value = list(input("Enter location to hit: "))
+        result = board.validate_play(value, board.board)
+        board.board = result[0]
+        return result[0]
