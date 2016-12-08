@@ -27,12 +27,31 @@ class Board:
         print("   " + " ".join([chr(c) for c in range(ord('A'), ord('A') +
                                                       self.BOARD_SIZE)]))
 
+    def print_two_board_headings(self):
+        print("   " + " ".join([chr(c) for c in range(ord('A'), ord('A') +
+                                                      self.BOARD_SIZE)]) +
+              "     " + " ".join([chr(c) for c in range(ord('A'), ord('A') +
+                                                        self.BOARD_SIZE)]))
+
     def print_board(self, board):
         # prints the board on the screen
         self.print_board_heading()
         row_num = 1
         for row in board:
             print(str(row_num).rjust(2) + " " + (" ".join(row)))
+            row_num += 1
+
+    def print_two_boards(self, boards):
+        # prints two boards on the screen
+        self.print_two_board_headings()
+        board1 = boards[0]
+        board2 = boards[1]
+        row_num = 1
+        for row in board1:
+            for row2 in board2:
+                print(str(row_num).rjust(2) + " " + (" ".join(row)) +
+                      str(row_num).rjust(4) + " " + (" ".join(row2)))
+                break
             row_num += 1
 
     def get_index(self, value):
@@ -131,7 +150,7 @@ class Board:
         else:
             return True
 
-    def validate_play(self, index, board):
+    def validate_play(self, index, hit_board, show_board):
         try:
             x_index = int(index[1]) - 1  # where horizontal ship starts
             y_index = self.ALLOWED_CHARS.index(index[0])  # vertical
@@ -141,27 +160,30 @@ class Board:
                                  ' board!!'
                                  .format(self.ALL_CHARS[y_index],
                                          x_index + 1))
-            elif board[x_index][y_index] == self.EMPTY:
-                board[x_index][y_index] = self.MISS
-                return board, "miss"
-            elif board[x_index][y_index] == self.VERTICAL_SHIP:
-                board[x_index][y_index] = self.HIT
-                return board, "hit"
-            elif board[x_index][y_index] == self.HORIZONTAL_SHIP:
-                board[x_index][y_index] = self.HIT
-                return board, "hit"
-            elif board[x_index][y_index] == self.MISS:
+            elif hit_board[x_index][y_index] == self.EMPTY:
+                hit_board[x_index][y_index] = self.MISS
+                show_board[x_index][y_index] = self.MISS
+                return 'miss', hit_board, show_board
+            elif hit_board[x_index][y_index] == self.VERTICAL_SHIP:
+                hit_board[x_index][y_index] = self.HIT
+                show_board[x_index][y_index] = self.HIT
+                return 'hit', hit_board, show_board
+            elif hit_board[x_index][y_index] == self.HORIZONTAL_SHIP:
+                hit_board[x_index][y_index] = self.HIT
+                show_board[x_index][y_index] = self.HIT
+                return 'hit', hit_board, show_board
+            elif hit_board[x_index][y_index] == self.MISS:
                 raise ValueError('You cannot play that position again.'
                                  ' You already played it!')
-            elif board[x_index][y_index] == self.HIT:
+            elif hit_board[x_index][y_index] == self.HIT:
                 raise ValueError('You cannot play that position again.'
                                  ' You already played it!')
         except IndexError as i:
             self.clear_screen()
-            return board, i.args[0]
+            return i.args[0], hit_board, show_board
         except ValueError as e:
             self.clear_screen()
-            return board, e.args[0]
+            return e.args[0], hit_board, show_board
 
     def ship_on_board(self, ship):
         """

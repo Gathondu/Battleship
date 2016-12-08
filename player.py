@@ -15,12 +15,20 @@ class Player:
                 board.ship_on_board(ship)
                 board.print_board(board.board)
 
-    def fire(self, board):
+    def fire(self, hit_board, show_board):
         value = list(input
                      ("Enter location to hit {}: ".format(self.name).lower()))
         # value = 'd', '6'
-        result = self.board.validate_play(value, board)
-        return result
+        result = self.board.validate_play(value, hit_board, show_board)
+        if result[0] == 'hit':
+            print('You HIT')
+            return result[1], result[2]
+        elif result[0] == 'miss':
+            print('You missed')
+            return result[1], result[2]
+        else:
+            print(result[0])
+            self.fire(hit_board, show_board)
 
 # player1 = Player("dng")
 # player2 = Player('john')
