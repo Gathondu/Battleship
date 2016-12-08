@@ -16,7 +16,16 @@ class Player:
                 board.print_board(board.board)
 
     def fire(self, board):
-        value = list(input("Enter location to hit: "))
-        result = board.validate_play(value, board.board)
-        board.board = result[0]
-        return result[0]
+        value = list(input
+                     ("Enter location to hit {}: ".format(self.name).lower()))
+        # value = 'd', '6'
+        result = self.board.validate_play(value, board)
+        return result
+
+# player1 = Player("dng")
+# player2 = Player('john')
+# player1.board = Board()
+# player2.board = Board()
+
+# player2.board.board = player1.fire(player2.board)
+# player1.board.print_board(player2.board.board)

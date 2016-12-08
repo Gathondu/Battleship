@@ -31,7 +31,7 @@ class Board:
         # prints the board on the screen
         self.print_board_heading()
         row_num = 1
-        for row in self.board:
+        for row in board:
             print(str(row_num).rjust(2) + " " + (" ".join(row)))
             row_num += 1
 
@@ -133,7 +133,7 @@ class Board:
 
     def validate_play(self, index, board):
         try:
-            x_index = int(index[1])  # where horizontal ship starts
+            x_index = int(index[1]) - 1  # where horizontal ship starts
             y_index = self.ALLOWED_CHARS.index(index[0])  # vertical
             if y_index not in range(10) or x_index not in range(10):
                 # +1 since y_index is zero based for the list
@@ -144,13 +144,24 @@ class Board:
             elif board[x_index][y_index] == self.EMPTY:
                 board[x_index][y_index] = self.MISS
                 return board, "miss"
-            elif board[x_index][y_index] != self.EMPTY:
+            elif board[x_index][y_index] == self.VERTICAL_SHIP:
                 board[x_index][y_index] = self.HIT
                 return board, "hit"
+            elif board[x_index][y_index] == self.HORIZONTAL_SHIP:
+                board[x_index][y_index] = self.HIT
+                return board, "hit"
+            elif board[x_index][y_index] == self.MISS:
+                raise ValueError('You cannot play that position again.'
+                                 ' You already played it!')
+            elif board[x_index][y_index] == self.HIT:
+                raise ValueError('You cannot play that position again.'
+                                 ' You already played it!')
         except IndexError as i:
             self.clear_screen()
-            print(i.args[0])
-            return board, "error"
+            return board, i.args[0]
+        except ValueError as e:
+            self.clear_screen()
+            return board, e.args[0]
 
     def ship_on_board(self, ship):
         """
@@ -163,9 +174,9 @@ class Board:
         returns a board with the ship marked
         """
         value = list(input('Place the location of the {} ({} spaces): '
-                           .format(*ship)))
+                           .format(*ship)).lower())
         orientation = input('Is it horizontal? [Y]/N: ').lower()
-        # value = ['j', '8']
+        # value = ['d', '6']
         # orientation = 'y'
         while True:
             if orientation not in ('y', 'n'):
@@ -198,14 +209,14 @@ class Board:
             self.ship_on_board(ship)
 
 
-b = Board()
-# ships = [
-#     ("Aircraft Carrier", 5),
-#     ("Patrol Boat", 2)
-# ]
+# b = Board()
+# # ships = [
+# #     ("Aircraft Carrier", 5),
+# #     ("Patrol Boat", 2)
+# #
 
-# for ship in ships:
-#     b.ship_on_board(ship)
-#     b.print_board(b.board)
-b.validate_play(('d', '8'), b.board)
-b.print_board(b.board)
+# # for ship in ships:
+# #     b.ship_on_board(ship)
+# #     b.print_board(b.board)
+# b.validate_play(('d', '8'), b.board)
+# b.print_board(b.board)
